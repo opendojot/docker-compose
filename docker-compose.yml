@@ -521,7 +521,7 @@ services:
       - "complete"
 
   auth:
-    image: open dojot/auth:${DOJOT_BACKEND_VERSION}
+    image: opendojot/auth:${DOJOT_BACKEND_VERSION}
     restart: always
     depends_on:
       - apigw
