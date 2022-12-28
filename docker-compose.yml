@@ -18,7 +18,7 @@ services:
 
   create_secrets:
     # To recreate the secrets, reset the files: MINIO_ACCESS_KEY, MINIO_SECRET_KEY which are in the docker-compose/secrets folder.
-    image: dojot/ubuntu_openssl:latest
+    image: opendojot/ubuntu_openssl:latest
     command:
         - "./secrets/create_secrets.sh"
     restart: on-failure
@@ -26,7 +26,7 @@ services:
       - ./secrets:/secrets
 
   history:
-    image: dojot/history:${DOJOT_BACKEND_VERSION}
+    image: opendojot/history:${DOJOT_BACKEND_VERSION}
     restart: always
     depends_on:
       - mongodb
@@ -42,7 +42,7 @@ services:
       - "complete"
 
   persister:
-    image: dojot/persister:${DOJOT_BACKEND_VERSION}
+    image: opendojot/persister:${DOJOT_BACKEND_VERSION}
     restart: always
     depends_on:
       - mongodb
@@ -63,7 +63,7 @@ services:
       - "complete"
 
   mongodb:
-    image: dojot/mongo:3.2
+    image: opendojot/mongo:3.2
     restart: always
     user: "mongodb"
     healthcheck:
@@ -90,7 +90,7 @@ services:
       - "complete"
 
   gui:
-    image: dojot/gui:${DOJOT_FRONTEND_VERSION}
+    image: opendojot/gui:${DOJOT_FRONTEND_VERSION}
     depends_on:
       - backstage
     restart: always
@@ -102,7 +102,7 @@ services:
       - "complete"
 
   gui-v2:
-    image: dojot/gui-v2:${DOJOT_FRONTEND_VERSION}
+    image: opendojot/gui-v2:${DOJOT_FRONTEND_VERSION}
     depends_on:
       - backstage
     restart: always
@@ -113,7 +113,7 @@ services:
       - "complete"
 
   data-broker:
-    image: dojot/data-broker:${DOJOT_BACKEND_VERSION}
+    image: opendojot/data-broker:${DOJOT_BACKEND_VERSION}
     restart: always
     depends_on:
       - kafka
@@ -141,7 +141,7 @@ services:
       - "complete"
 
   data-broker-redis:
-    image: dojot/redis:5.0.5-alpine3.10
+    image: opendojot/redis:5.0.5-alpine3.10
     restart: always
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -167,7 +167,7 @@ services:
 # iot-agent lwm2m
 ################
   iotagent-lwm2m:
-    image: dojot/iotagent-leshan:${DOJOT_BACKEND_VERSION}
+    image: opendojot/iotagent-leshan:${DOJOT_BACKEND_VERSION}
     depends_on:
       - kafka
       - data-broker
@@ -192,7 +192,7 @@ services:
       - "complete"
 
   image-manager:
-    image: dojot/image-manager:${DOJOT_BACKEND_VERSION}
+    image: opendojot/image-manager:${DOJOT_BACKEND_VERSION}
     restart: always
     depends_on:
       - postgres
@@ -211,7 +211,7 @@ services:
       - "complete"
 
   minio:
-    image: dojot/minio:2019.09.20
+    image: opendojot/minio:2019.09.20
     restart: always
     depends_on:
       create_secrets:
@@ -290,7 +290,7 @@ services:
       - "complete"
 
   file-mgmt:
-    image: dojot/file-mgmt:${DOJOT_BACKEND_VERSION}
+    image: opendojot/file-mgmt:${DOJOT_BACKEND_VERSION}
     restart: always
     depends_on:
       - minio-files
@@ -318,7 +318,7 @@ services:
       - "complete"
 
   device-manager:
-    image: dojot/device-manager:${DOJOT_BACKEND_VERSION}
+    image: opendojot/device-manager:${DOJOT_BACKEND_VERSION}
     restart: always
     environment:
       # TODO: Fill these env variables with suitable values
@@ -346,7 +346,7 @@ services:
       - "complete"
 
   postgres:
-    image: dojot/postgres:9.5.21-alpine
+    image: opendojot/postgres:9.5.21-alpine
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
@@ -381,7 +381,7 @@ services:
 
   # Prepare database, Bootstrap the database
   kong-migrations:
-    image: dojot/kong:${DOJOT_BACKEND_VERSION}
+    image: opendojot/kong:${DOJOT_BACKEND_VERSION}
     command: kong migrations bootstrap
     depends_on:
       postgres:
@@ -414,7 +414,7 @@ services:
 
   # Run any new migrations and Finish running any pending migrations after 'up'.
   kong-migrations-up:
-    image:  dojot/kong:${DOJOT_BACKEND_VERSION}
+    image:  opendojot/kong:${DOJOT_BACKEND_VERSION}
     command: kong migrations up && kong migrations finish
     depends_on:
       postgres:
@@ -446,7 +446,7 @@ services:
       - "complete"
 
   apigw:
-    image: dojot/kong:${DOJOT_BACKEND_VERSION}
+    image: opendojot/kong:${DOJOT_BACKEND_VERSION}
     depends_on:
       postgres:
         condition: service_healthy
@@ -506,7 +506,7 @@ services:
       - "complete"
 
   kong-config:
-    image: dojot/appropriate-curl
+    image: opendojot/appropriate-curl
     entrypoint: /opt/kong.config.sh
     restart: on-failure
     depends_on:
@@ -521,7 +521,7 @@ services:
       - "complete"
 
   auth:
-    image: dojot/auth:${DOJOT_BACKEND_VERSION}
+    image: open dojot/auth:${DOJOT_BACKEND_VERSION}
     restart: always
     depends_on:
       - apigw
@@ -561,7 +561,7 @@ services:
       - "complete"
 
   auth-redis:
-    image: dojot/redis:5.0.5-alpine3.10
+    image: opendojot/redis:5.0.5-alpine3.10
     restart: always
     volumes:
       - auth-redis-volume:/data
@@ -581,7 +581,7 @@ services:
       - "complete"
 
   flowbroker:
-    image: dojot/flowbroker:${DOJOT_BACKEND_VERSION}
+    image: opendojot/flowbroker:${DOJOT_BACKEND_VERSION}
     restart: always
     environment:
       DEPLOY_ENGINE: "docker"
@@ -611,7 +611,7 @@ services:
       - "complete"
 
   flowbroker-redis:
-    image: dojot/redis:5.0.5-alpine3.10
+    image: opendojot/redis:5.0.5-alpine3.10
     restart: always
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -628,7 +628,7 @@ services:
       - "complete"
 
   flowbroker-context-manager:
-    image: dojot/flowbroker-context-manager:${DOJOT_BACKEND_VERSION}
+    image: opendojot/flowbroker-context-manager:${DOJOT_BACKEND_VERSION}
     restart: always
     environment:
       ZOOKEEPER_HOST: zookeeper
@@ -761,7 +761,7 @@ services:
       - "complete"
 
   x509-identity-mgmt:
-    image: dojot/x509-identity-mgmt:${DOJOT_BACKEND_VERSION}
+    image: opendojot/x509-identity-mgmt:${DOJOT_BACKEND_VERSION}
     depends_on:
       - x509-ejbca
       - postgres
@@ -795,7 +795,7 @@ services:
       - "complete"
 
   x509-ejbca: # this service cannot be called 'ejbca'
-    image: dojot/ejbca:${DOJOT_BACKEND_VERSION}
+    image: opendojot/ejbca:${DOJOT_BACKEND_VERSION}
     depends_on:
       - postgres
     restart: always
@@ -831,7 +831,7 @@ services:
       - "complete"
 
   kafka-ws:
-    image: dojot/kafka-ws:${DOJOT_BACKEND_VERSION}
+    image: opendojot/kafka-ws:${DOJOT_BACKEND_VERSION}
     depends_on:
       - kafka
       - kafka-ws-redis
@@ -849,7 +849,7 @@ services:
       - "complete"
 
   kafka-ws-redis:
-    image: dojot/redis:6.0.4-alpine3.11
+    image: opendojot/redis:6.0.4-alpine3.11
     restart: always
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -865,7 +865,7 @@ services:
       - "complete"
 
   acl-redis:
-    image: dojot/redis:6.0.4-alpine3.11
+    image: opendojot/redis:6.0.4-alpine3.11
     restart: always
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -884,7 +884,7 @@ services:
       - "iot-agent-http"
 
   certificate-acl:
-    image: dojot/certificate-acl:${DOJOT_BACKEND_VERSION}
+    image: opendojot/certificate-acl:${DOJOT_BACKEND_VERSION}
     environment:
       CERTIFICATE_ACL_LOGGER_CONSOLE_LEVEL: "info"
     depends_on:
@@ -902,7 +902,7 @@ services:
       - "iot-agent-http"
 
   iotagent-mqtt:
-    image: dojot/vernemq-dojot:${DOJOT_BACKEND_VERSION}
+    image: opendojot/vernemq-dojot:${DOJOT_BACKEND_VERSION}
     command: ["/bin/bash", "-c", "echo $$VERNEMQ_CONF | base64 -d > /etc/vernemq/vernemq.conf; echo $$VM_ARGS | base64 -d > /etc/vernemq/vm.args; start_vernemq"]
     depends_on:
       - iotagent-mqtt-cert-sidecar
@@ -928,7 +928,7 @@ services:
       - "complete"
 
   iotagent-mqtt-cert-sidecar:
-    image: dojot/cert-sidecar:${DOJOT_BACKEND_VERSION}
+    image: opendojot/cert-sidecar:${DOJOT_BACKEND_VERSION}
     depends_on:
       - x509-identity-mgmt
     environment:
@@ -957,7 +957,7 @@ services:
       - "complete"
 
   v2k-bridge:
-    image: dojot/v2k-bridge:${DOJOT_BACKEND_VERSION}
+    image: opendojot/v2k-bridge:${DOJOT_BACKEND_VERSION}
     depends_on:
       - iotagent-mqtt
       - kafka
@@ -982,7 +982,7 @@ services:
       - "complete"
 
   v2k-bridge-cert-sidecar:
-    image: dojot/cert-sidecar:${DOJOT_BACKEND_VERSION}
+    image: opendojot/cert-sidecar:${DOJOT_BACKEND_VERSION}
     depends_on:
       - x509-identity-mgmt
     environment:
@@ -1006,7 +1006,7 @@ services:
       - "complete"
 
   k2v-bridge:
-    image: dojot/k2v-bridge:${DOJOT_BACKEND_VERSION}
+    image: opendojot/k2v-bridge:${DOJOT_BACKEND_VERSION}
     depends_on:
       - iotagent-mqtt
       - kafka
@@ -1031,7 +1031,7 @@ services:
       - "complete"
 
   k2v-bridge-cert-sidecar:
-    image: dojot/cert-sidecar:${DOJOT_BACKEND_VERSION}
+    image: opendojot/cert-sidecar:${DOJOT_BACKEND_VERSION}
     depends_on:
       - x509-identity-mgmt
     environment:
@@ -1055,7 +1055,7 @@ services:
       - "complete"
 
   http-agent-cert-sidecar:
-    image: dojot/cert-sidecar:${DOJOT_BACKEND_VERSION}
+    image: opendojot/cert-sidecar:${DOJOT_BACKEND_VERSION}
     depends_on:
       - x509-identity-mgmt
     environment:
@@ -1082,7 +1082,7 @@ services:
       - "complete"
 
   http-agent:
-    image: dojot/http-agent:${DOJOT_BACKEND_VERSION}
+    image: opendojot/http-agent:${DOJOT_BACKEND_VERSION}
     restart: always
     depends_on:
       - kafka
@@ -1111,7 +1111,7 @@ services:
       - "complete"
 
   http-agent-redis:
-    image: dojot/redis:6.0.4-alpine3.11
+    image: opendojot/redis:6.0.4-alpine3.11
     restart: always
     volumes:
       - http-agent-redis-volume:/data
@@ -1123,7 +1123,7 @@ services:
       - "complete"
 
   data-manager:
-    image: dojot/data-manager:${DOJOT_BACKEND_VERSION}
+    image: opendojot/data-manager:${DOJOT_BACKEND_VERSION}
     restart: always
     depends_on:
       - flowbroker
@@ -1135,7 +1135,7 @@ services:
       - "complete"
 
   backstage:
-    image: dojot/backstage:${DOJOT_FRONTEND_VERSION}
+    image: opendojot/backstage:${DOJOT_FRONTEND_VERSION}
     restart: always
     depends_on:
       - postgres
@@ -1147,7 +1147,7 @@ services:
       - "complete"
 
   cron:
-    image: dojot/cron:${DOJOT_BACKEND_VERSION}
+    image: opendojot/cron:${DOJOT_BACKEND_VERSION}
     restart: always
     depends_on:
       - kafka
@@ -1164,7 +1164,7 @@ services:
 ### influxdb begin
 
   influxdb-retriever:
-    image: dojot/influxdb-retriever:${DOJOT_BACKEND_VERSION}
+    image: opendojot/influxdb-retriever:${DOJOT_BACKEND_VERSION}
     depends_on:
       - influxdb
     environment:
@@ -1177,7 +1177,7 @@ services:
       - "complete"
 
   influxdb-storer:
-    image: dojot/influxdb-storer:${DOJOT_BACKEND_VERSION}
+    image: opendojot/influxdb-storer:${DOJOT_BACKEND_VERSION}
     depends_on:
       - kafka
       - influxdb
@@ -1254,7 +1254,7 @@ services:
   # Konga GUI will be available at http://localhost:1337
   #
   konga:
-    image: dojot/pantsel_konga:0.14.7
+    image: opendojot/pantsel_konga:0.14.7
     ports:
       - 1337:1337
     environment:
@@ -1322,7 +1322,7 @@ services:
     - "tools"
 
   basic-auth:
-    image: dojot/device-basic-authentication:${DOJOT_BACKEND_VERSION}
+    image: opendojot/device-basic-authentication:${DOJOT_BACKEND_VERSION}
     restart: always
     depends_on:
       - kafka
